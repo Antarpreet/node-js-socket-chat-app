@@ -23,10 +23,11 @@ io.on('connection', socket => {
         console.log('Client Disconnected');
     });
 
-    socket.on('createMessage', (msg) => {
+    socket.on('createMessage', (msg, callback) => {
         console.log('Create message', msg);
         
         io.emit('newMessage', (generateMessage(msg.from, msg.text)));
+        callback('This is from server');
         // socket.broadcast.emit('newMessage', generateMessage(msg.from, msg.text));
     });
 });
