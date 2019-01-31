@@ -171,6 +171,13 @@
   .message__title span {
     color: #999;
   }
+
+  .message__location {
+    background-image: linear-gradient(to right, rgb(63, 206, 255) 0%, rgb(16, 74, 94) 100%);
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
   
   @media (max-width: 600px) {
     * {
