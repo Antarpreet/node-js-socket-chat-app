@@ -28,12 +28,20 @@ class Users {
     getUser (id) {
         return this.users.find(user => user.id === id);
     }
+
+    getUserByNameAndRoom (name, room) {
+        return this.users.find(user => user.name === name && user.room === room);
+    }
     
     getUserList (room) {
         var users = this.users.filter(user => user.room === room);
         var namesArray = users.map(user => user.name);
 
         return namesArray;
+    }
+
+    getRooms () {
+        return this.users.map(user => user.room);
     }
 }
 

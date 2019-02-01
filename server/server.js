@@ -31,14 +31,20 @@ io.on('connection', socket => {
         if(!isRealString(params.name) || !isRealString(params.room)) {
             return callback('Name and room name are required');
         }
+        let room = params.room.toLowerCase();
+        let user = users.getUserByNameAndRoom(params.name, room);
 
-        socket.join(params.room);
-        users.removeUser(socket.id);
-        users.addUser(socket.id, params.name, params.room);
-
-        io.to(params.room).emit('updateUserList', users.getUserList(params.room));
+        if(!user) {
+            socket.join(room);
+            users.removeUser(socket.id);
+            users.addUser(socket.id, params.name, room);
+        } else {
+            return callback('Username already Taken.');
+        }
+        io.emit('getRooms', users.getRooms());
+        io.to(room).emit('updateUserList', users.getUserList(room));
         socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
-        socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined`));
+        socket.broadcast.to(room).emit('newMessage', generateMessage('Admin', `${params.name} has joined`));
         callback();
     });
 
@@ -65,3 +71,5 @@ io.on('connection', socket => {
 server.listen(port, () => {
     console.log(`Serving is running on Port ${port}`);
 });
+
+// drop-down for rooms
