@@ -42,9 +42,7 @@ class Users {
     }
 
     getRooms () {
-        let arr = _.uniqBy(this.users, (e) => {
-            e.room
-        });
+        let arr = _.uniqBy(this.users, 'room');
         return arr.map(item => item.room);
     }
 }
