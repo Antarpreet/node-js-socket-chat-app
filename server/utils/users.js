@@ -4,6 +4,7 @@
     room: 'Good Food'
 }]
 
+const _ = require('lodash');
 class Users {
     constructor () {
         this.users = [];
@@ -41,7 +42,10 @@ class Users {
     }
 
     getRooms () {
-        return this.users.map(user => user.room);
+        let arr = _.uniqBy(this.users, (e) => {
+            e.room
+        });
+        return arr.map(item => item.room);
     }
 }
 

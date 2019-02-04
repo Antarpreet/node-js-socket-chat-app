@@ -17,7 +17,7 @@ app.use(express.static(publicPath));
 
 io.on('connection', socket => {
     console.log('New user connected');
-
+    io.emit('getRooms', users.getRooms());
     socket.on('disconnect', () => {
         var user = users.removeUser(socket.id);
 
@@ -41,7 +41,7 @@ io.on('connection', socket => {
         } else {
             return callback('Username already Taken.');
         }
-        io.emit('getRooms', users.getRooms());
+        
         io.to(room).emit('updateUserList', users.getUserList(room));
         socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
         socket.broadcast.to(room).emit('newMessage', generateMessage('Admin', `${params.name} has joined`));
