@@ -12,12 +12,45 @@ var app = express();
 var server = http.createServer(app);
 var io = socketIO(server);
 var users = new Users();
+var restaurants = [{
+    name: 'Tim Hortons', 
+    people: 0,
+    averageTime: 2
+},{
+    name: 'Starbucks', 
+    people: 0,
+    averageTime: 2
+},{
+    name: 'Subway', 
+    people: 0,
+    averageTime: 1
+},{
+    name: 'Triple O\'s', 
+    people: 0,
+    averageTime: 3
+},{
+    name: '2mato', 
+    people: 0,
+    averageTime: 2
+}];
+
+restaurants.forEach(item => {
+    let timer = setInterval(() => {
+        if(item.people == 0) {
+            clearInterval(timer);
+        } else {
+            item.people--;
+            io.emit('updatedList', restaurants);
+        }
+    }, item.averageTime * 1000 * 60);
+});
 
 app.use(express.static(publicPath));
 
 io.on('connection', socket => {
     console.log('New user connected');
     io.emit('getRooms', users.getRooms());
+    io.emit('updatedList', restaurants);
     socket.on('disconnect', () => {
         var user = users.removeUser(socket.id);
 
@@ -64,6 +97,21 @@ io.on('connection', socket => {
         if(user) {
             io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
         }
+    });
+
+    socket.on('setPeople', data => {
+        if(restaurants[data.id].people == 0) {
+            let timer = setInterval(() => {
+                if(restaurants[data.id].people == 0) {
+                    clearInterval(timer);
+                } else {
+                    restaurants[data.id].people--;
+                    io.emit('updatedList', restaurants);
+                }
+            }, restaurants[data.id].averageTime * 1000 * 60)
+        }
+        restaurants[data.id].people = data.people;
+        io.emit('updatedList', restaurants);
     });
 
 });
